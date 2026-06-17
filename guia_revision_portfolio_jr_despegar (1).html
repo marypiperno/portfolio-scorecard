@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Revisión Portfolio – UX JR @ Despegar</title>
+<style>
+  :root {
+    --green: #8DC63F;
+    --dark: #1a1a2e;
+    --card: #16213e;
+    --text: #e0e0e0;
+    --muted: #a0a0b0;
+    --yellow: #f5c518;
+    --purple: #7b2ff7;
+    --teal: #00bcd4;
+    --red: #ff5252;
+    --orange: #ff9800;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+  header {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1a1a2e 100%);
+    border-bottom: 3px solid var(--teal);
+    padding: 20px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  header .logo { font-size: 20px; font-weight: 800; color: var(--teal); }
+  header .subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .badge { margin-left: auto; background: var(--teal); color: #000; font-weight: 700; font-size: 12px; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+
+  nav { display: flex; gap: 4px; padding: 16px 32px 0; border-bottom: 1px solid #2a2a4a; overflow-x: auto; }
+  nav button { background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  nav button.active { color: var(--teal); border-bottom-color: var(--teal); }
+  nav button:hover:not(.active) { color: var(--text); }
+
+  .tab-content { display: none; padding: 28px 32px; max-width: 980px; }
+  .tab-content.active { display: block; }
+
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 18px; }
+  h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  p { font-size: 14px; line-height: 1.65; }
+
+  .card { background: var(--card); border: 1px solid #2a2a4a; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card.teal  { border-left: 4px solid var(--teal); }
+  .card.green { border-left: 4px solid var(--green); }
+  .card.yellow{ border-left: 4px solid var(--yellow); }
+  .card.purple{ border-left: 4px solid var(--purple); }
+  .card.orange{ border-left: 4px solid var(--orange); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* Señales */
+  .signal { border-radius: 10px; padding: 12px 16px; margin-bottom: 10px; }
+  .signal:last-child { margin-bottom: 0; }
+  .signal-green  { background: #0d1f0d; border: 1px solid #2a5a2a; }
+  .signal-red    { background: #1f0d0d; border: 1px solid #5a2020; }
+  .signal-yellow { background: #1f1a0a; border: 1px solid #5a4a10; }
+  .signal-label  { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .signal-green  .signal-label { color: var(--green); }
+  .signal-red    .signal-label { color: var(--red); }
+  .signal-yellow .signal-label { color: var(--yellow); }
+  .signal p { font-size: 13px; line-height: 1.55; color: var(--text); }
+
+  /* Checklist items */
+  .check-list { list-style: none; margin-top: 10px; }
+  .check-list li { font-size: 13px; line-height: 1.6; padding: 6px 0; border-bottom: 1px solid #2a2a4a; display: flex; gap: 10px; align-items: flex-start; color: var(--text); }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before { content: "→"; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* Perfil tabs internos */
+  .profile-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .profile-tab-btn { background: #0f2030; border: 1px solid #2a4a5a; color: var(--muted); font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+  .profile-tab-btn.active { background: var(--teal); color: #000; border-color: var(--teal); }
+  .profile-section { display: none; }
+  .profile-section.active { display: block; }
+
+  /* Scorecard */
+  .scorecard-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scorecard-table th { background: #0f2030; color: var(--teal); font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid #2a4a5a; }
+  .scorecard-table td { padding: 10px 14px; border-bottom: 1px solid #2a2a4a; color: var(--text); vertical-align: top; }
+  .scorecard-table tr:last-child td { border-bottom: none; }
+  .scorecard-table .dim { font-weight: 700; color: var(--teal); }
+  .scorecard-table .weight { color: var(--muted); font-size: 12px; }
+  select.score-select { background: #0f2030; color: var(--text); border: 1px solid #2a4a5a; border-radius: 6px; padding: 4px 8px; font-size: 13px; cursor: pointer; width: 100%; }
+  textarea.notes-input { background: #0f1a25; color: var(--text); border: 1px solid #2a3a4a; border-radius: 6px; padding: 8px; font-size: 12px; width: 100%; resize: vertical; min-height: 48px; font-family: inherit; }
+  .total-row td { font-weight: 700; background: #0f2030; color: var(--green); font-size: 14px; }
+
+  .result-box { margin-top: 16px; background: #0f2030; border: 2px solid #2a4a5a; border-radius: 12px; padding: 20px; text-align: center; }
+  .result-score { font-size: 40px; font-weight: 900; }
+  .result-label { font-size: 16px; font-weight: 700; margin-top: 4px; }
+  .result-sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  /* Perfil toggle en scorecard */
+  .profile-toggle { display: flex; gap: 8px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+  .profile-toggle span { font-size: 13px; color: var(--muted); margin-right: 4px; }
+  .toggle-btn { background: #0f2030; border: 1px solid #2a4a5a; color: var(--muted); font-size: 12px; font-weight: 700; padding: 6px 16px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+  .toggle-btn.active { background: var(--teal); color: #000; border-color: var(--teal); }
+
+  /* Dimension header */
+  .dim-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #2a2a4a; }
+  .dim-icon { font-size: 22px; }
+  .dim-title { font-size: 15px; font-weight: 800; color: var(--teal); }
+  .dim-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .notice { background: #1a2a1a; border: 1px solid #2a5a2a; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: var(--green); line-height: 1.6; }
+  .notice strong { font-weight: 800; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">🗂️ Guía Revisión Portfolio – UX JR</div>
+    <div class="subtitle">Revisión de portfolio · Foco: potencial, craft visual y consistencia</div>
+  </div>
+  <div class="badge">JR UX Manager</div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('foco', this)">🎯 Qué mirar</button>
+  <button onclick="showTab('perfiles', this)">👤 Por tipo de perfil</button>
+  <button onclick="showTab('jr', this)">🌱 Perfil JR</button>
+  <button onclick="showTab('scorecard', this)">✅ Scorecard</button>
+</nav>
+
+<!-- ======== TAB 1: QUÉ MIRAR ======== -->
+<div class="tab-content active" id="foco">
+  <h2>Qué observar al revisar un portfolio JR</h2>
+  <p style="margin-bottom:20px; color:var(--muted);">El portfolio es la herramienta principal para evaluar habilidades y potencial real. Es acá donde ves el trabajo en acción.</p>
+
+  <div class="card teal">
+    <h3>La pregunta central que guía tu revisión</h3>
+    <p style="font-size: 15px; margin-top: 4px;">¿Este portfolio muestra potencial real y calidad de ejecución, o solo volumen de trabajo?</p>
+    <p style="font-size: 13px; color: var(--muted); margin-top: 8px;">En un perfil JR no buscás experiencia exhaustiva. Buscás señales de curiosidad, cuidado en el craft y capacidad de aprendizaje. Un portfolio pequeño pero bien ejecutado vale más que uno voluminoso sin criterio.</p>
+  </div>
+
+  <div class="card">
+    <div class="dim-header">
+      <div class="dim-icon">🎨</div>
+      <div>
+        <div class="dim-title">Consistencia visual</div>
+        <div class="dim-sub">El indicador más claro de madurez en el craft</div>
+      </div>
+    </div>
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Hay dos niveles para evaluar: la consistencia <strong style="color:var(--text);">dentro de cada proyecto</strong> y el criterio visual <strong style="color:var(--text);">entre proyectos</strong>. Son cosas distintas.</p>
+    <p style="font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Dentro de cada proyecto</p>
+    <div class="signal signal-green" style="margin-bottom:8px;">
+      <div class="signal-label">✅ Buena señal</div>
+      <p>Los elementos visuales (colores, tipografías, iconografía, espaciado) se mantienen coherentes a lo largo de todas las pantallas o piezas del proyecto. El sistema se siente unificado.</p>
+    </div>
+    <div class="signal signal-yellow" style="margin-bottom:8px;">
+      <div class="signal-label">⚠️ Señal intermedia</div>
+      <p>Hay consistencia en la mayoría de las pantallas pero se notan variaciones no intencionales: un botón que cambia de estilo, una tipografía que varía sin razón.</p>
+    </div>
+    <div class="signal signal-red" style="margin-bottom:16px;">
+      <div class="signal-label">🚨 Red flag</div>
+      <p>Cada pantalla parece diseñada de forma aislada. No hay un sistema visual sostenido dentro del mismo proyecto.</p>
+    </div>
+    <p style="font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Entre proyectos — criterio visual propio</p>
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">Los proyectos pueden ser muy diferentes entre sí y eso es esperable. Lo que sí podés evaluar es si hay una sensibilidad estética reconocible, aunque el estilo varíe.</p>
+    <div class="signal signal-green" style="margin-bottom:8px;">
+      <div class="signal-label">✅ Buena señal</div>
+      <p>Aunque los proyectos sean distintos, se nota un ojo entrenado: buen manejo del espacio, decisiones tipográficas cuidadas, paletas con intención. Hay una voz visual propia.</p>
+    </div>
+    <div class="signal signal-red">
+      <div class="signal-label">⚠️ A tener en cuenta</div>
+      <p>Los proyectos se ven muy dispares en calidad o criterio. Puede indicar que algunos fueron más guiados que otros, o que el nivel de dedicación varía mucho. Vale la pena preguntar en la entrevista.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="dim-header">
+      <div class="dim-icon">🔤</div>
+      <div>
+        <div class="dim-title">Escalas tipográficas y jerarquía</div>
+        <div class="dim-sub">Revela si el candidato entiende cómo guiar la lectura</div>
+      </div>
+    </div>
+    <div class="signal signal-green">
+      <div class="signal-label">✅ Buena señal</div>
+      <p>Usa tipografías con criterio de jerarquía: títulos, subtítulos, cuerpo y labels claramente diferenciados. El ojo sabe hacia dónde ir en cada pantalla o pieza.</p>
+    </div>
+    <div class="signal signal-yellow">
+      <div class="signal-label">⚠️ Señal intermedia</div>
+      <p>La jerarquía existe pero es básica o inconsistente entre secciones. Usa bien 1–2 niveles pero el resto queda sin criterio.</p>
+    </div>
+    <div class="signal signal-red">
+      <div class="signal-label">🚨 Red flag</div>
+      <p>Todo tiene el mismo peso visual. No hay diferenciación clara entre niveles de información. La tipografía se eligió por estética, no por función.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="dim-header">
+      <div class="dim-icon">🧩</div>
+      <div>
+        <div class="dim-title">Uso de componentes</div>
+        <div class="dim-sub">Señal de pensamiento sistémico temprano</div>
+      </div>
+    </div>
+    <div class="signal signal-green">
+      <div class="signal-label">✅ Buena señal</div>
+      <p>Los elementos de interfaz (botones, cards, campos) se repiten de forma estandarizada. Se nota que el candidato pensó en reutilización y no rediseñó cada elemento desde cero.</p>
+    </div>
+    <div class="signal signal-yellow">
+      <div class="signal-label">⚠️ Señal intermedia</div>
+      <p>Algunos componentes son consistentes, pero otros varían sin justificación aparente. Puede ser falta de hábito más que falta de comprensión.</p>
+    </div>
+    <div class="signal signal-red">
+      <div class="signal-label">🚨 Red flag</div>
+      <p>Cada pantalla tiene versiones distintas del mismo elemento. No hay evidencia de pensar en un sistema, sino en resolver pantalla por pantalla.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="dim-header">
+      <div class="dim-icon">✨</div>
+      <div>
+        <div class="dim-title">Atractivo visual y cuidado del craft</div>
+        <div class="dim-sub">Para perfiles JR, el impacto visual es un diferenciador clave</div>
+      </div>
+    </div>
+    <div class="signal signal-green">
+      <div class="signal-label">✅ Buena señal</div>
+      <p>Las interfaces o piezas se ven cuidadas, hay intención detrás de cada decisión estética. Aunque sea un proyecto académico, se nota esfuerzo y sensibilidad visual.</p>
+    </div>
+    <div class="signal signal-yellow">
+      <div class="signal-label">⚠️ Señal intermedia</div>
+      <p>El trabajo se ve correcto pero genérico. Podría confundirse con un template. No hay una voz visual propia.</p>
+    </div>
+    <div class="signal signal-red">
+      <div class="signal-label">🚨 Red flag</div>
+      <p>El trabajo parece apresurado o sin terminar. Hay errores visuales evidentes (alineaciones, espaciados, colores sin contraste) que no fueron corregidos.</p>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Recordá:</strong> No es necesario que el candidato cumpla con todos los puntos. Si tiene poca experiencia formal pero el portfolio muestra proyectos bien ejecutados y potencial claro, vale la pena avanzar. <strong>El objetivo es identificar potencial y calidad, no una trayectoria exhaustiva.</strong>
+  </div>
+</div>
+
+<!-- ======== TAB 2: POR TIPO DE PERFIL ======== -->
+<div class="tab-content" id="perfiles">
+  <h2>Qué mirar según el tipo de perfil</h2>
+  <p style="margin-bottom: 20px; color:var(--muted);">El foco varía según el background del candidato. Seleccioná el perfil para ver las claves específicas.</p>
+
+  <div class="profile-tabs">
+    <button class="profile-tab-btn active" onclick="showProfile('uxui', this)">🖥️ Diseñador UX/UI</button>
+    <button class="profile-tab-btn" onclick="showProfile('grafico', this)">🖋️ Diseñador Gráfico / Dir. de Arte</button>
+  </div>
+
+  <!-- UX/UI -->
+  <div class="profile-section active" id="uxui">
+    <div class="card teal">
+      <h3>Diseñador UX/UI — foco de la revisión</h3>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Para un JR de UX/UI, el atractivo visual es clave en esta etapa. Acá revisás el craft y la coherencia visual.</p>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🔁</div>
+        <div>
+          <div class="dim-title">Consistencia entre pantallas y flujos</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Observá cómo maneja los elementos visuales a lo largo de distintas pantallas y estados.</p>
+      <ul class="check-list">
+        <li>¿Los botones, campos, iconos y cards se ven iguales en todas las pantallas?</li>
+        <li>¿Los colores y tipografías se aplican con el mismo criterio en todo el flujo?</li>
+        <li>¿Los espaciados y márgenes son uniformes o cambian sin razón?</li>
+        <li>¿Los estados (hover, activo, error, vacío) están contemplados con consistencia?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🔤</div>
+        <div>
+          <div class="dim-title">Escalas tipográficas</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">El uso tipográfico revela si el candidato entiende jerarquía de información.</p>
+      <ul class="check-list">
+        <li>¿Hay diferenciación clara entre títulos, subtítulos, cuerpo y labels?</li>
+        <li>¿La escala tipográfica se mantiene igual en todas las pantallas?</li>
+        <li>¿El tamaño y peso de los textos responden a su función, no solo a la estética?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🧩</div>
+        <div>
+          <div class="dim-title">Uso de componentes</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Identificá si el candidato reutiliza elementos de forma inteligente y estandarizada.</p>
+      <ul class="check-list">
+        <li>¿Los componentes de UI (botones, inputs, cards) son reutilizados o rediseñados en cada pantalla?</li>
+        <li>¿Se nota que hay una lógica de sistema detrás, aunque sea básica?</li>
+        <li>¿Las variaciones de un componente (ej: botón primario vs. secundario) son coherentes entre sí?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">✨</div>
+        <div>
+          <div class="dim-title">Atractivo visual</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Para un JR, las interfaces deben ser estéticamente agradables y funcionales.</p>
+      <ul class="check-list">
+        <li>¿Las interfaces se ven cuidadas y terminadas?</li>
+        <li>¿Hay buena relación entre densidad de información y espacio en blanco?</li>
+        <li>¿El trabajo transmite una sensibilidad visual propia, más allá de seguir templates?</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- GRÁFICO / DA -->
+  <div class="profile-section" id="grafico">
+    <div class="card purple">
+      <h3>Diseñador Gráfico / Director de Arte — foco de la revisión</h3>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Prestá especial atención a los proyectos de branding. La habilidad para crear sistemas visuales coherentes es un fuerte indicador de cómo manejarán la consistencia en interfaces digitales.</p>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🏷️</div>
+        <div>
+          <div class="dim-title">Coherencia de marca</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Observá cómo el candidato mantiene la marca unificada a través de diferentes piezas y soportes.</p>
+      <ul class="check-list">
+        <li>¿La identidad visual se traslada con coherencia a distintos formatos (digital, impreso, social media)?</li>
+        <li>¿Las piezas parecen parte del mismo sistema o cada una fue diseñada de forma aislada?</li>
+        <li>¿Hay evidencia de que pensó en reglas de uso de la marca, más allá del logo?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🎨</div>
+        <div>
+          <div class="dim-title">Consistencia visual del sistema</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Analizá el uso constante de los elementos visuales del sistema a través de los proyectos.</p>
+      <ul class="check-list">
+        <li><strong>Paleta de colores:</strong> ¿se aplica con los mismos criterios en todas las piezas?</li>
+        <li><strong>Tipografías y jerarquías:</strong> ¿hay una escala tipográfica definida y consistente?</li>
+        <li><strong>Iconografía:</strong> ¿los iconos siguen el mismo estilo y trazo en todo el sistema?</li>
+        <li><strong>Ilustración / fotografía:</strong> ¿el estilo visual es coherente o mezcla estilos sin intención?</li>
+        <li><strong>Espacio en blanco:</strong> ¿se usa como herramienta de diseño, no solo como relleno?</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="dim-header">
+        <div class="dim-icon">🔗</div>
+        <div>
+          <div class="dim-title">Transferencia al mundo digital</div>
+          <div class="dim-sub">¿Qué tan trasladable es su base al UX/UI?</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Una base sólida en branding demuestra comprensión para construir sistemas de diseño digital. Buscá estas señales de transferencia:</p>
+      <div class="signal signal-green">
+        <div class="signal-label">✅ Fuerte transferencia</div>
+        <p>El candidato muestra proyectos donde aplicó su sistema visual a interfaces o tiene proyectos mixtos (branding + digital). Demuestra comprensión de cómo las reglas de marca se traducen en componentes.</p>
+      </div>
+      <div class="signal signal-yellow">
+        <div class="signal-label">⚠️ Transferencia parcial</div>
+        <p>Excelente trabajo gráfico pero sin experiencia digital. Evaluá si los principios que aplica (sistematicidad, escalas, jerarquía) podrían trasladarse con guía y tiempo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 3: PERFIL JR ======== -->
+<div class="tab-content" id="jr">
+  <h2>Qué esperar de un perfil JR</h2>
+  <p style="margin-bottom:20px; color:var(--muted);">El perfil JR trabaja bajo guía de un manager o diseñador más experimentado. Las cualidades más importantes son curiosidad intensa, proactividad y disposición para aprender.</p>
+
+  <div class="card teal">
+    <h3>La diferencia que define al JR</h3>
+    <p style="font-size: 15px; margin-top: 4px;">Buscás personas que quieran aprender, no personas que ya llegaron.</p>
+    <p style="font-size: 13px; color: var(--muted); margin-top: 8px;">Un JR de Despegar está orientado al desarrollo de productos digitales, combinando enfoque en usuario y negocio. Ejecuta tareas de investigación y diseño aplicando procesos y herramientas establecidas, con apoyo del equipo.</p>
+  </div>
+
+  <div class="card">
+    <div class="dim-header">
+      <div class="dim-icon">🌱</div>
+      <div>
+        <div class="dim-title">Características clave del perfil</div>
+      </div>
+    </div>
+    <ul class="check-list">
+      <li><strong>Curiosidad y proactividad:</strong> ¿el portfolio muestra exploración, experimentos, proyectos personales? ¿hay evidencia de que busca aprender más allá de lo que se le pide?</li>
+      <li><strong>Comprensión del negocio:</strong> ¿muestra alguna conciencia de que el diseño existe dentro de un contexto de negocio, no solo de usuario?</li>
+      <li><strong>Ejecución táctica:</strong> ¿puede ejecutar bien las tareas de su especialidad? ¿aplica correctamente los procesos y herramientas de diseño?</li>
+      <li><strong>Comunicación del proyecto:</strong> ¿el portfolio explica el proceso y las decisiones, o solo muestra el resultado final?</li>
+      <li><strong>Uso de metodologías:</strong> ¿menciona o aplica metodologías y guidelines establecidos (design thinking, atomic design, heurísticas)?</li>
+      <li><strong>Visión más allá de su tarea:</strong> ¿hay alguna señal de que piensa en el impacto de su trabajo en el producto o equipo más amplio?</li>
+      <li><strong>Síntesis:</strong> ¿sabe contar su trabajo de forma clara y concisa, destacando lo relevante?</li>
+    </ul>
+  </div>
+
+  <div class="card green">
+    <div class="dim-header">
+      <div class="dim-icon">🚀</div>
+      <div>
+        <div class="dim-title">Señales de alto potencial</div>
+        <div class="dim-sub">Indicadores de que vale la pena avanzar incluso con poca experiencia</div>
+      </div>
+    </div>
+    <div class="signal signal-green" style="margin-bottom:10px;">
+      <div class="signal-label">✅ Potencial alto</div>
+      <p>Pocos proyectos pero muy bien ejecutados. Cada decisión visual tiene intención. El candidato puede explicar el "por qué" detrás del "qué".</p>
+    </div>
+    <div class="signal signal-green">
+      <div class="signal-label">✅ Potencial alto</div>
+      <p>Proyectos personales o auto-iniciados. Muestra que aprende por su cuenta y no espera que le asignen tareas para crecer.</p>
+    </div>
+  </div>
+
+  <div class="card yellow">
+    <div class="dim-header">
+      <div class="dim-icon">⚠️</div>
+      <div>
+        <div class="dim-title">Señales de alerta</div>
+        <div class="dim-sub">No son descartantes por sí solos, pero requieren profundización en el challenge</div>
+      </div>
+    </div>
+    <div class="signal signal-yellow" style="margin-bottom:10px;">
+      <div class="signal-label">⚠️ Evaluar más</div>
+      <p>El portfolio es solo una colección de pantallas sin contexto ni proceso. Puede indicar dificultad para comunicar el trabajo.</p>
+    </div>
+    <div class="signal signal-yellow">
+      <div class="signal-label">⚠️ Evaluar más</div>
+      <p>Todos los proyectos son académicos y muy similares entre sí. No hay evidencia de exploración propia ni curiosidad más allá del curso.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======== TAB 4: SCORECARD ======== -->
+<div class="tab-content" id="scorecard">
+  <h2>Scorecard de revisión de portfolio</h2>
+  <p style="margin-bottom: 20px; color:var(--muted);">Primero buscá al candidato por su Opportunity ID, confirmá que es el correcto, y después completá el scorecard.</p>
+
+  <!-- PASO 1: BUSCAR CANDIDATO -->
+  <div class="card teal" id="step-buscar">
+    <h3 style="margin-bottom:12px;">Paso 1 — Buscar candidato</h3>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Copiá el Opportunity ID desde la columna P de tu hoja en el Sheet y pegalo acá.</p>
+    <div style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
+      <div style="flex:1; min-width:200px;">
+        <label style="font-size:11px; color:var(--teal); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Opportunity ID</label>
+        <input type="text" id="opp-id-input" placeholder="Ej: 12345abc-6789-..." style="width:100%; background:#0f1a25; color:var(--text); border:1px solid #2a4a5a; border-radius:6px; padding:9px 12px; font-size:13px; font-family:inherit;" />
+      </div>
+      <div style="padding-top:23px;">
+        <button onclick="buscarCandidato()" id="btn-buscar" style="background:var(--teal); color:#000; border:none; border-radius:6px; padding:9px 20px; font-size:13px; font-weight:800; cursor:pointer; white-space:nowrap;">Buscar →</button>
+      </div>
+    </div>
+    <div id="buscar-status" style="margin-top:12px; font-size:13px; display:none;"></div>
+  </div>
+
+  <!-- PASO 2: CONFIRMACIÓN DEL CANDIDATO -->
+  <div id="step-confirmar" style="display:none;">
+    <div class="card" style="border-left:4px solid var(--green);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:11px; color:var(--green); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">✓ Candidato encontrado</div>
+          <div style="font-size:18px; font-weight:800; color:var(--text);" id="conf-nombre"></div>
+          <div style="font-size:13px; color:var(--muted); margin-top:4px;" id="conf-email"></div>
+          <div style="display:flex; gap:16px; margin-top:10px; flex-wrap:wrap;">
+            <span style="font-size:12px;"><span style="color:var(--teal); font-weight:700;">Especialidad:</span> <span id="conf-esp"></span></span>
+            <span style="font-size:12px;"><span style="color:var(--teal); font-weight:700;">Banda:</span> <span id="conf-banda"></span></span>
+            <span style="font-size:12px;"><span style="color:var(--teal); font-weight:700;">Score IA:</span> <span id="conf-score"></span></span>
+          </div>
+          <div style="margin-top:10px;">
+            <span style="font-size:12px; color:var(--teal); font-weight:700;">Portfolio:</span>
+            <span id="conf-portfolio" style="font-size:12px; margin-left:6px; word-break:break-all;"></span>
+          </div>
+        </div>
+        <button onclick="resetBusqueda()" style="background:none; border:1px solid #2a4a5a; color:var(--muted); border-radius:6px; padding:6px 14px; font-size:12px; cursor:pointer;">Cambiar candidato</button>
+      </div>
+      <div id="conf-ya-revisado" style="display:none; margin-top:12px; padding:10px 14px; background:#1f1a0a; border:1px solid #5a4a10; border-radius:8px; font-size:12px; color:var(--yellow);">
+        ⚠️ Este candidato ya tiene un scorecard cargado. Si enviás uno nuevo, se sobreescribirá el anterior.
+      </div>
+    </div>
+
+    <!-- TIPO DE PERFIL -->
+    <div class="profile-toggle" style="margin-top:4px;">
+      <span>Tipo de perfil:</span>
+      <button class="toggle-btn active" onclick="setProfileType('uxui', this)">🖥️ UX/UI</button>
+      <button class="toggle-btn" onclick="setProfileType('grafico', this)">🖋️ Gráfico / DA</button>
+    </div>
+
+    <!-- TABLA SCORECARD -->
+    <table class="scorecard-table">
+      <thead>
+        <tr>
+          <th>Dimensión</th>
+          <th>Peso</th>
+          <th>Puntaje (1–5)</th>
+          <th>Notas / evidencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="dim">Consistencia visual</span><br>
+            <span style="font-size:11px;color:var(--muted);" id="dim1-sub">¿Elementos coherentes entre pantallas y flujos?</span>
+          </td>
+          <td><span class="weight">×3 (CLAVE)</span></td>
+          <td>
+            <select class="score-select" id="s1" onchange="calcTotal()">
+              <option value="0">– elegir –</option>
+              <option value="1">1 · Sin consistencia</option>
+              <option value="2">2 · Consistencia parcial</option>
+              <option value="3">3 · Consistente con criterio</option>
+              <option value="4">4 · Muy consistente</option>
+              <option value="5">5 · Sistema visual sólido</option>
+            </select>
+          </td>
+          <td><textarea class="notes-input" id="n1" placeholder="Ej: paleta y componentes coherentes en todo el flujo de onboarding..."></textarea></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="dim">Craft visual y atractivo</span><br>
+            <span style="font-size:11px;color:var(--muted);" id="dim2-sub">¿Las interfaces son estéticamente cuidadas?</span>
+          </td>
+          <td><span class="weight">×2.5</span></td>
+          <td>
+            <select class="score-select" id="s2" onchange="calcTotal()">
+              <option value="0">– elegir –</option>
+              <option value="1">1 · Muy básico o descuidado</option>
+              <option value="2">2 · Correcto pero genérico</option>
+              <option value="3">3 · Cuidado y funcional</option>
+              <option value="4">4 · Visualmente sólido</option>
+              <option value="5">5 · Destacado, voz visual propia</option>
+            </select>
+          </td>
+          <td><textarea class="notes-input" id="n2" placeholder="Ej: muy buen uso del espacio en blanco, sensibilidad visual clara..."></textarea></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="dim">Escala tipográfica</span><br>
+            <span style="font-size:11px;color:var(--muted);">¿Jerarquía visual clara y consistente?</span>
+          </td>
+          <td><span class="weight">×2</span></td>
+          <td>
+            <select class="score-select" id="s3" onchange="calcTotal()">
+              <option value="0">– elegir –</option>
+              <option value="1">1 · Sin jerarquía clara</option>
+              <option value="2">2 · Jerarquía básica</option>
+              <option value="3">3 · Escala definida y aplicada</option>
+              <option value="4">4 · Muy bien aplicada</option>
+              <option value="5">5 · Excepcional</option>
+            </select>
+          </td>
+          <td><textarea class="notes-input" id="n3" placeholder="Ej: 4 niveles tipográficos bien diferenciados en todas las pantallas..."></textarea></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="dim" id="dim4-label">Uso de componentes</span><br>
+            <span style="font-size:11px;color:var(--muted);" id="dim4-sub">¿Reutiliza elementos de forma estandarizada?</span>
+          </td>
+          <td><span class="weight">×1.5</span></td>
+          <td>
+            <select class="score-select" id="s4" onchange="calcTotal()">
+              <option value="0">– elegir –</option>
+              <option value="1">1 · Sin evidencia de sistema</option>
+              <option value="2">2 · Algunos componentes reutilizados</option>
+              <option value="3">3 · Sistema básico consistente</option>
+              <option value="4">4 · Buen pensamiento sistémico</option>
+              <option value="5">5 · Sistema visual completo</option>
+            </select>
+          </td>
+          <td><textarea class="notes-input" id="n4" placeholder="Ej: botones y cards reutilizados correctamente en todo el flujo..."></textarea></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="dim">Potencial y comunicación del trabajo</span><br>
+            <span style="font-size:11px;color:var(--muted);">¿Explica su proceso? ¿Muestra curiosidad?</span>
+          </td>
+          <td><span class="weight">×1</span></td>
+          <td>
+            <select class="score-select" id="s5" onchange="calcTotal()">
+              <option value="0">– elegir –</option>
+              <option value="1">1 · Solo muestra resultado, sin contexto</option>
+              <option value="2">2 · Algo de proceso pero muy básico</option>
+              <option value="3">3 · Comunica proceso y decisiones</option>
+              <option value="4">4 · Proceso claro, señales de curiosidad</option>
+              <option value="5">5 · Alto potencial evidente</option>
+            </select>
+          </td>
+          <td><textarea class="notes-input" id="n5" placeholder="Ej: explica cada decisión, tiene proyectos personales además de académicos..."></textarea></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="2">PUNTAJE PONDERADO TOTAL</td>
+          <td colspan="2" id="total-display" style="font-size: 16px;">— completá los puntajes —</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="result-box" id="result-box" style="display:none;">
+      <div class="result-score" id="result-score"></div>
+      <div class="result-label" id="result-label"></div>
+      <div class="result-sub" id="result-sub"></div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h3>📝 Notas libres del portfolio</h3>
+      <textarea class="notes-input" id="notas-libres" style="min-height:100px; width:100%; margin-top:8px;" placeholder="Observaciones generales, proyectos destacados, preguntas para profundizar en la entrevista..."></textarea>
+    </div>
+
+    <div class="card green" style="margin-top:4px;">
+      <h3>Criterio de decisión orientativo</h3>
+      <div class="grid2" style="margin-top:10px; margin-bottom:0;">
+        <div class="signal signal-green" style="margin:0;"><div class="signal-label">≥ 3.5 promedio ponderado</div><p>Avanzar. El portfolio muestra craft y potencial alineados con el perfil JR.</p></div>
+        <div class="signal signal-yellow" style="margin:0;"><div class="signal-label">2.5 – 3.4</div><p>Evaluar con criterio. Si el potencial es claro pero la ejecución es básica, puede valer una conversación previa.</p></div>
+      </div>
+      <div class="signal signal-red" style="margin-top:10px; margin-bottom:0;"><div class="signal-label">&lt; 2.5</div><p>No avanzar en esta instancia. El portfolio no muestra el nivel de craft ni el potencial esperado para el rol.</p></div>
+    </div>
+
+    <!-- PASO 3: ENVIAR AL SHEET -->
+    <div class="card" style="margin-top:14px; border-left:4px solid var(--teal);">
+      <h3 style="margin-bottom:8px;">Paso 3 — Guardar en el Sheet</h3>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Cuando termines, enviá el scorecard al pipeline. Los datos se escribirán en la fila del candidato en tu hoja.</p>
+      <button onclick="enviarScorecard()" id="btn-enviar" style="background:var(--teal); color:#000; border:none; border-radius:8px; padding:11px 28px; font-size:14px; font-weight:800; cursor:pointer;">Guardar en el Sheet →</button>
+      <div id="enviar-status" style="margin-top:12px; font-size:13px; display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // URL del Web App — reemplazá con la URL real al publicar el script
+  const WEBAPP_URL = 'TU_URL_AQUI';
+
+  // Estado del candidato actual
+  let candidatoActual = null;
+  let managerActual = null;
+
+  // ── Navegación de tabs ──────────────────────────────────────
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function showProfile(id, btn) {
+    document.querySelectorAll('.profile-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Tipo de perfil ──────────────────────────────────────────
+  function setProfileType(type, btn) {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (type === 'grafico') {
+      document.getElementById('dim1-sub').textContent = '¿Coherencia visual entre piezas y soportes?';
+      document.getElementById('dim2-sub').textContent = '¿Las piezas se ven cuidadas y con identidad?';
+      document.getElementById('dim4-label').textContent = 'Sistema de marca';
+      document.getElementById('dim4-sub').textContent = '¿Aplica reglas visuales de forma sistemática?';
+    } else {
+      document.getElementById('dim1-sub').textContent = '¿Elementos coherentes entre pantallas y flujos?';
+      document.getElementById('dim2-sub').textContent = '¿Las interfaces son estéticamente cuidadas?';
+      document.getElementById('dim4-label').textContent = 'Uso de componentes';
+      document.getElementById('dim4-sub').textContent = '¿Reutiliza elementos de forma estandarizada?';
+    }
+    calcTotal();
+  }
+
+  // ── Buscar candidato ────────────────────────────────────────
+  async function buscarCandidato() {
+    const oppId = document.getElementById('opp-id-input').value.trim();
+    if (!oppId) { mostrarStatus('buscar-status', '⚠️ Ingresá el Opportunity ID primero.', 'yellow'); return; }
+
+    const btn = document.getElementById('btn-buscar');
+    btn.textContent = 'Buscando...';
+    btn.disabled = true;
+    mostrarStatus('buscar-status', 'Buscando en el pipeline...', 'muted');
+
+    try {
+      const url = `${WEBAPP_URL}?action=buscar&id=${encodeURIComponent(oppId)}`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (data.status === 'error') {
+        mostrarStatus('buscar-status', '❌ Error: ' + data.mensaje, 'red');
+        return;
+      }
+
+      if (!data.encontrado) {
+        mostrarStatus('buscar-status', '❌ No se encontró un candidato con ese Opportunity ID. Verificá que lo copiaste bien.', 'red');
+        return;
+      }
+
+      // Candidato encontrado — mostrar confirmación
+      candidatoActual = data.candidato;
+      managerActual = data.manager;
+
+      document.getElementById('conf-nombre').textContent = data.candidato.nombre || '—';
+      document.getElementById('conf-email').textContent = data.candidato.email || '';
+      document.getElementById('conf-esp').textContent = data.candidato.especialidad || '—';
+      document.getElementById('conf-banda').textContent = data.candidato.banda || '—';
+      document.getElementById('conf-score').textContent = data.candidato.score || '—';
+
+      const portEl = document.getElementById('conf-portfolio');
+      const portUrl = data.candidato.portfolio;
+      if (portUrl) {
+        portEl.innerHTML = `<a href="${portUrl}" target="_blank" style="color:var(--teal);">${portUrl}</a>`;
+      } else {
+        portEl.textContent = 'Sin portfolio registrado';
+      }
+
+      const yaRevisado = document.getElementById('conf-ya-revisado');
+      yaRevisado.style.display = data.candidato.portfolioYaRevisado ? 'block' : 'none';
+
+      document.getElementById('step-confirmar').style.display = 'block';
+      document.getElementById('buscar-status').style.display = 'none';
+
+    } catch (err) {
+      mostrarStatus('buscar-status', '❌ No se pudo conectar con el Sheet. Verificá la URL del script.', 'red');
+    } finally {
+      btn.textContent = 'Buscar →';
+      btn.disabled = false;
+    }
+  }
+
+  function resetBusqueda() {
+    candidatoActual = null;
+    managerActual = null;
+    document.getElementById('step-confirmar').style.display = 'none';
+    document.getElementById('opp-id-input').value = '';
+    document.getElementById('buscar-status').style.display = 'none';
+    // Reset scorecard
+    ['s1','s2','s3','s4','s5'].forEach(id => document.getElementById(id).value = '0');
+    ['n1','n2','n3','n4','n5'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('notas-libres').value = '';
+    document.getElementById('result-box').style.display = 'none';
+    document.getElementById('total-display').textContent = '— completá los puntajes —';
+    document.getElementById('enviar-status').style.display = 'none';
+  }
+
+  // ── Calcular puntaje ────────────────────────────────────────
+  function calcTotal() {
+    const weights = [3, 2.5, 2, 1.5, 1];
+    const ids = ['s1','s2','s3','s4','s5'];
+    let totalWeight = 0, totalScore = 0, filled = 0;
+    ids.forEach((id, i) => {
+      const val = parseFloat(document.getElementById(id).value);
+      if (val > 0) { totalScore += val * weights[i]; totalWeight += weights[i]; filled++; }
+    });
+    const display = document.getElementById('total-display');
+    const box = document.getElementById('result-box');
+    if (filled === 0) { display.textContent = '— completá los puntajes —'; box.style.display = 'none'; return; }
+    const avg = totalScore / totalWeight;
+    display.textContent = avg.toFixed(2) + ' / 5.00 (' + filled + '/5 dimensiones)';
+    if (filled === 5) {
+      box.style.display = 'block';
+      const scoreEl = document.getElementById('result-score');
+      scoreEl.textContent = avg.toFixed(2);
+      let label, sub;
+      if (avg >= 4.2) {
+        label = '🟢 Avanzar — potencial destacado'; sub = 'El portfolio supera las expectativas para un JR. Priorizar en el pipeline.';
+        scoreEl.style.color = 'var(--green)';
+      } else if (avg >= 3.5) {
+        label = '🟢 Avanzar — perfil JR sólido'; sub = 'El portfolio muestra craft y potencial alineados con el perfil JR buscado.';
+        scoreEl.style.color = '#aed581';
+      } else if (avg >= 2.5) {
+        label = '🟡 Evaluar con criterio'; sub = 'Potencial visible pero ejecución básica. Puede valer una conversación previa.';
+        scoreEl.style.color = 'var(--yellow)';
+      } else {
+        label = '🔴 No avanzar en esta instancia'; sub = 'El portfolio no muestra el nivel de craft ni el potencial esperado para el rol.';
+        scoreEl.style.color = 'var(--red)';
+      }
+      document.getElementById('result-label').textContent = label;
+      document.getElementById('result-sub').textContent = sub;
+    } else {
+      box.style.display = 'none';
+    }
+  }
+
+  // ── Enviar scorecard al Sheet ───────────────────────────────
+  async function enviarScorecard() {
+    if (!candidatoActual) { alert('Primero buscá y confirmá un candidato.'); return; }
+
+    const weights = [3, 2.5, 2, 1.5, 1];
+    const ids = ['s1','s2','s3','s4','s5'];
+    let totalWeight = 0, totalScore = 0, filled = 0;
+    ids.forEach((id, i) => {
+      const val = parseFloat(document.getElementById(id).value);
+      if (val > 0) { totalScore += val * weights[i]; totalWeight += weights[i]; filled++; }
+    });
+
+    if (filled < 5) {
+      mostrarStatus('enviar-status', '⚠️ Completá los 5 puntajes antes de guardar.', 'yellow');
+      return;
+    }
+
+    const avg = totalScore / totalWeight;
+    let decision = '';
+    if (avg >= 4.2)      decision = 'Avanzar — potencial destacado';
+    else if (avg >= 3.5) decision = 'Avanzar — perfil JR sólido';
+    else if (avg >= 2.5) decision = 'Evaluar con criterio';
+    else                 decision = 'No avanzar';
+
+    const tipoPerfil = document.querySelector('.toggle-btn.active')?.textContent.trim() || '';
+
+    const payload = {
+      opportunityId: candidatoActual.opportunityId,
+      manager:       managerActual,
+      tipoPerfil:    tipoPerfil,
+      s1: document.getElementById('s1').value,
+      s2: document.getElementById('s2').value,
+      s3: document.getElementById('s3').value,
+      s4: document.getElementById('s4').value,
+      s5: document.getElementById('s5').value,
+      puntajeTotal: avg.toFixed(2),
+      decision:     decision,
+      notasS1: document.getElementById('n1').value,
+      notasS2: document.getElementById('n2').value,
+      notasS3: document.getElementById('n3').value,
+      notasS4: document.getElementById('n4').value,
+      notasS5: document.getElementById('n5').value,
+      notasLibres: document.getElementById('notas-libres').value
+    };
+
+    const btn = document.getElementById('btn-enviar');
+    btn.textContent = 'Guardando...';
+    btn.disabled = true;
+    mostrarStatus('enviar-status', 'Enviando al Sheet...', 'muted');
+
+    try {
+      const resp = await fetch(WEBAPP_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+
+      if (data.status === 'ok') {
+        mostrarStatus('enviar-status', '✅ ' + data.mensaje, 'green');
+        btn.textContent = '✅ Guardado';
+      } else {
+        mostrarStatus('enviar-status', '❌ Error: ' + data.mensaje, 'red');
+        btn.textContent = 'Guardar en el Sheet →';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      mostrarStatus('enviar-status', '❌ No se pudo conectar. Verificá la URL del script.', 'red');
+      btn.textContent = 'Guardar en el Sheet →';
+      btn.disabled = false;
+    }
+  }
+
+  // ── Helper visual ───────────────────────────────────────────
+  function mostrarStatus(elId, msg, tipo) {
+    const el = document.getElementById(elId);
+    const colores = { green: 'var(--green)', red: 'var(--red)', yellow: 'var(--yellow)', muted: 'var(--muted)' };
+    el.style.color = colores[tipo] || 'var(--text)';
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>
